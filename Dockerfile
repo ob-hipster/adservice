@@ -28,6 +28,8 @@ RUN ./gradlew installDist
 FROM eclipse-temurin:19.0.1_10-jre-alpine@sha256:fabe27bd9db502d484a11d3f571c2f4ef7bba4a172527084d939935358fb06c4 as development
 
 RUN apk add --no-cache ca-certificates
+# environment variables
+ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xmx6m"
 
 # Download Stackdriver Profiler Java agent
 RUN mkdir -p /opt/cprof && \
