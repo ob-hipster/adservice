@@ -29,7 +29,7 @@ FROM eclipse-temurin:19.0.1_10-jre-alpine@sha256:fabe27bd9db502d484a11d3f571c2f4
 
 RUN apk add --no-cache ca-certificates
 # environment variables
-ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xmx6m"
+ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xmx600m"
 
 # Download Stackdriver Profiler Java agent
 RUN mkdir -p /opt/cprof && \
@@ -46,6 +46,9 @@ ENTRYPOINT ["/app/build/install/hipstershop/bin/AdService"]
 FROM eclipse-temurin:19.0.1_10-jre-alpine@sha256:fabe27bd9db502d484a11d3f571c2f4ef7bba4a172527084d939935358fb06c4 as production
 
 RUN apk add --no-cache ca-certificates
+
+# environment variables
+ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xmx6m"
 
 # Download Stackdriver Profiler Java agent
 RUN mkdir -p /opt/cprof && \
