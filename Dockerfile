@@ -25,7 +25,23 @@ COPY . .
 RUN chmod +x gradlew
 RUN ./gradlew installDist
 
-FROM eclipse-temurin:19.0.1_10-jre-alpine@sha256:fabe27bd9db502d484a11d3f571c2f4ef7bba4a172527084d939935358fb06c4
+FROM eclipse-temurin:19.0.1_10-jre-alpine@sha256:fabe27bd9db502d484a11d3f571c2f4ef7bba4a172527084d939935358fb06c4 as development
+
+RUN apk add --no-cache ca-certificates
+
+# Download Stackdriver Profiler Java agent
+RUN mkdir -p /opt/cprof && \
+    wget -q -O- https://storage.googleapis.com/cloud-profiler/java/latest/profiler_java_agent_alpine.tar.gz \
+    | tar xzv -C /opt/cprof && \
+    rm -rf profiler_java_agent.tar.gz
+
+WORKDIR /app
+COPY --from=builder /app .
+
+EXPOSE 9555
+ENTRYPOINT ["/app/build/install/hipstershop/bin/AdService"]
+
+FROM eclipse-temurin:19.0.1_10-jre-alpine@sha256:fabe27bd9db502d484a11d3f571c2f4ef7bba4a172527084d939935358fb06c4 as production
 
 RUN apk add --no-cache ca-certificates
 
