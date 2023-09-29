@@ -27,7 +27,7 @@ RUN ./gradlew installDist
 
 FROM eclipse-temurin:19.0.1_10-jre-alpine@sha256:fabe27bd9db502d484a11d3f571c2f4ef7bba4a172527084d939935358fb06c4 as development
 
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates supervisor
 # environment variables
 ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xmx600m"
 
@@ -39,13 +39,15 @@ RUN mkdir -p /opt/cprof && \
 
 WORKDIR /app
 COPY --from=builder /app .
+# keep container running for java debugging
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 9555
-ENTRYPOINT ["/app/build/install/hipstershop/bin/AdService"]
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
 
 FROM eclipse-temurin:19.0.1_10-jre-alpine@sha256:fabe27bd9db502d484a11d3f571c2f4ef7bba4a172527084d939935358fb06c4 as production
 
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates supervisor
 
 # environment variables
 ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xmx6m"
@@ -58,6 +60,8 @@ RUN mkdir -p /opt/cprof && \
 
 WORKDIR /app
 COPY --from=builder /app .
+# keep container running for java debugging
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 9555
-ENTRYPOINT ["/app/build/install/hipstershop/bin/AdService"]
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
