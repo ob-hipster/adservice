@@ -29,7 +29,7 @@ FROM eclipse-temurin:19.0.1_10-jre-alpine@sha256:fabe27bd9db502d484a11d3f571c2f4
 
 RUN apk add --no-cache ca-certificates supervisor
 # environment variables
-ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xmx6`00m"
+ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xmx150m"
 
 # Download Stackdriver Profiler Java agent
 RUN mkdir -p /opt/cprof && \
